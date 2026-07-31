@@ -36,7 +36,8 @@
 <li>displays the picture associated with the record (if a picture isn't found for the record or the record does not exist)</li>
 <li>option to display the QR code for the record</li>
 <li>displays the last modified date of the id.txt</li>
-<li>press the "backspace" key to navigate to the previous page</li>
+<li>press the "backspace" key to navigate to the previous page (if there is a previous page)</li>
+<li>press the "backspace" key to close the page (if there isn't a previous page)</li>
 <li>press the "esc" key to navigate to the parent directory</li>
 </ul>
 <br />
