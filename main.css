@@ -1,0 +1,90 @@
+body {
+    background-color: black;
+    font-family: Roboto;
+}
+p {
+    color: white;
+}
+h1 {
+    color: white;
+}
+h2 {
+    color: white;
+}
+h3 {
+    color: white;
+}
+h4 {
+    color: white;
+}
+h5 {
+    color: white;
+}
+h6 {
+    color: white;
+}
+a {
+    text-decoration: underline;
+    color: white;
+}
+li {
+    color: white;
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+.button_txt {
+    opacity: 1;
+    color: white;
+    transition: all 0.3s ease-out;
+}
+.button_txt:hover {
+    opacity: 0.5;
+}
+.button:hover{
+    background-color: whitesmoke;
+    color: black;
+}
+/* desktop #button */
+@media screen and (min-width: 480px) {
+  .button {
+    margin: auto;
+    border: 3px solid white;
+    color: whitesmoke;
+    background-color: black;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease-out;
+    }
+}
+/* mobile #button */
+@media screen and (max-width: 480px) {
+  .button {
+    margin: auto;
+    border: 5px solid white;
+    color: whitesmoke;
+    background-color: black;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    }
+}
+
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+    margin: auto;
+    border: 3px solid white;
+    color: whitesmoke;
+    background-color: black;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease-out;
+}
+label {
+    color: white;
+}

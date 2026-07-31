@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Azonosító szerinti keresés</title>
 <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
-<link rel="stylesheet" type="text/css" href="1.css">
+<link rel="stylesheet" type="text/css" href="main.css">
 <link rel="shortcut icon" href="favicon.ico" />
 <style>
 * { box-sizing: border-box; }
@@ -46,9 +46,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start; /* nem középre */
-    min-height: 100vh;
     margin: 0;
     padding: 2rem;
+    max-height: 100vh;
+    overflow-x: hidden;
 }
 .container {
     background: #fff;
@@ -106,7 +107,7 @@ button:hover { background: #005fa3; }
         <h1>Azonosító szerinti keresés</h1>
         <form method="post">
             <input type="text" id="id" name="id" inputmode="numeric" pattern="[0-9]*">
-            <button type="submit">Ugrás</button>
+            <button type="submit">Keresés</button>
         </form>
     </div>
 
@@ -127,6 +128,64 @@ button:hover { background: #005fa3; }
 </script>
         <?php unset($_SESSION['msg']); ?>
     <?php endif; ?>
+    
+<script>
+document.addEventListener("keydown", function(e) {
+    // Ha a gombot folyamatosan nyomva tartják, ne fusson le többször
+    if (e.repeat) return;
+
+    // Ellenőrizzük, hogy aktív-e valamilyen beviteli mező
+    const isInputActive = ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName);
+    
+    if (isInputActive) {
+        // --- HA AKTÍV EGY BEVITELI MEZŐ ---
+        if (e.key === "Escape") {
+            // Kifókuszál a mezőből
+            e.target.blur();
+        } else if (e.key === "Tab") {
+            e.preventDefault(); // Megakadályozzuk, hogy átugorjon a következő elemre
+            e.target.value = ''; // Mező tartalmának törlése
+            e.target.dispatchEvent(new Event('input', { bubbles: true })); // Változás jelzése a rendszernek
+        }
+        return; // Kilépünk, hogy a többi gomb (pl. Backspace) normálisan működjön gépeléskor
+    }
+
+    // --- HA NINCS AKTÍV BEVITELI MEZŐ ---
+    if (e.key === "Escape") {
+        e.preventDefault(); // Böngésző alapértelmezésének blokkolása
+        window.location.href = "../"; // Ugrás egy könyvtárral feljebb
+    } else if (e.key === "Backspace") {
+        e.preventDefault(); // Megakadályozzuk az extra böngészős funkciókat
+        window.history.back(); // Visszalépés pontosan egy oldalt
+    } else if (e.key === "Enter") {
+        e.preventDefault(); // Megakadályozzuk az alapértelmezett viselkedést
+        // Megkeressük az első látható, szöveges beviteli mezőt az oldalon
+        const firstInput = document.querySelector('input:not([type="hidden"]):not([type="submit"]):not([type="button"])');
+        if (firstInput) {
+            firstInput.focus(); // Befókuszálunk
+        }
+    }
+});
+    
+// --- ZOOMOLÁS LETILTÁSA MOBILON ---
+
+// 1. Kétujjas (pinch-to-zoom) nagyítás letiltása
+document.addEventListener('touchmove', function (event) {
+    if (event.touches.length > 1) {
+        event.preventDefault(); // Ha egynél több ujjal érnek a képernyőhöz, ne csináljon semmit
+    }
+}, { passive: false });
+
+// 2. Dupla koppintásos (double-tap) nagyítás erőszakos letiltása (ha a CSS nem lenne elég Safari alatt)
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+    let now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault(); // Ha 300 milliszekundumon belül két koppintás történik, letiltja
+    }
+    lastTouchEnd = now;
+}, false);
+</script>
     
 </div>
 </body>

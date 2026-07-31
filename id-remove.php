@@ -28,14 +28,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $lines = file($file, FILE_IGNORE_NEW_LINES);
         $deleteId = ltrim($deleteId, "0");
 
+        // Megkeressük az utolsó azonosítót a fájlban
+        $lastIdLtrim = '';
+        if (count($lines) >= 4) {
+            $lastIdLtrim = ltrim($lines[count($lines) - 4], "0");
+        }
+
         $found = false;
         $newLines = [];
         for ($i = 0; $i < count($lines); $i += 4) {
             $currentId = ltrim($lines[$i], "0");
+            
             if ($currentId === $deleteId) {
                 $found = true;
-                continue;
+                
+                // Ha ez a legutolsó elem, akkor teljesen kihagyjuk (valódi törlés a fájl végéről)
+                if ($currentId === $lastIdLtrim) {
+                    continue;
+                } else {
+                    // Ha korábbi elem, akkor felülírjuk a tartalmat, hogy a sorok ne csússzanak el
+                    $newLines[] = $lines[$i]; // Az eredeti ID szám megtartása
+                    $newLines[] = "[RENDSZERBŐL TÖRÖLVE]";
+                    $newLines[] = "[RENDSZERBŐL TÖRÖLVE]";
+                    $newLines[] = "[RENDSZERBŐL TÖRÖLVE]";
+                    continue;
+                }
             } else {
+                // Megtartjuk az eredeti sorokat minden más ID-nél
                 for ($j = 0; $j < 4 && ($i+$j) < count($lines); $j++) {
                     $newLines[] = $lines[$i + $j];
                 }
@@ -79,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Azonosító törlése</title>
-    <link rel="stylesheet" type="text/css" href="1.css">
+    <link rel="stylesheet" type="text/css" href="main.css">
     <link rel="shortcut icon" href="favicon.ico" />
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <style>
@@ -91,9 +110,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            min-height: 100vh;
             margin: 0;
             padding: 2rem;
+            max-height: 100vh;
+            overflow-x: hidden;
         }
         .container {
             background: #fff;
@@ -180,18 +200,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="msg <?php echo $_SESSION['msg']['type']; ?>">
                 <?php echo $_SESSION['msg']['text']; ?>
             </div>
+            
+            <?php if ($_SESSION['msg']['type'] === 'success'): ?>
+                <script>
+                    setTimeout(() => {
+                        window.location.href = "index.html";
+                    }, 3000);
+                </script>
+            <?php endif; ?>
+
             <?php unset($_SESSION['msg']); ?>
         <?php endif; ?>
     </div>
-
-    <?php if (!empty($_SESSION['redirect'])): ?>
-        <script>
-            setTimeout(() => {
-                window.location.href = "<?php echo $_SERVER['PHP_SELF']; ?>";
-            }, 3000);
-        </script>
-        <?php unset($_SESSION['redirect']); ?>
-    <?php endif; ?>
     <script>
     // üzenet eltüntetése 2 másodperc után
     setTimeout(() => {
@@ -202,6 +222,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             setTimeout(() => msg.remove(), 500); // végleg eltávolítja
         }
     }, 2000);
+        
+document.addEventListener("keydown", function(e) {
+    // Ha a gombot folyamatosan nyomva tartják, ne fusson le többször
+    if (e.repeat) return;
+
+    // Ellenőrizzük, hogy aktív-e valamilyen beviteli mező
+    const isInputActive = ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName);
+    
+    if (isInputActive) {
+        // --- HA AKTÍV EGY BEVITELI MEZŐ ---
+        if (e.key === "Escape") {
+            // Kifókuszál a mezőből
+            e.target.blur();
+        } else if (e.key === "Tab") {
+            e.preventDefault(); // Megakadályozzuk, hogy átugorjon a következő elemre
+            e.target.value = ''; // Mező tartalmának törlése
+            e.target.dispatchEvent(new Event('input', { bubbles: true })); // Változás jelzése a rendszernek
+        }
+        return; // Kilépünk, hogy a többi gomb (pl. Backspace) normálisan működjön gépeléskor
+    }
+
+    // --- HA NINCS AKTÍV BEVITELI MEZŐ ---
+    if (e.key === "Escape") {
+        e.preventDefault(); // Böngésző alapértelmezésének blokkolása
+        window.location.href = "../"; // Ugrás egy könyvtárral feljebb
+    } else if (e.key === "Backspace") {
+        e.preventDefault(); // Megakadályozzuk az extra böngészős funkciókat
+        window.history.back(); // Visszalépés pontosan egy oldalt
+    } else if (e.key === "Enter") {
+        e.preventDefault(); // Megakadályozzuk az alapértelmezett viselkedést
+        // Megkeressük az első látható, szöveges beviteli mezőt az oldalon
+        const firstInput = document.querySelector('input:not([type="hidden"]):not([type="submit"]):not([type="button"])');
+        if (firstInput) {
+            firstInput.focus(); // Befókuszálunk
+        }
+    }
+});
+        
+// --- ZOOMOLÁS LETILTÁSA MOBILON ---
+
+// 1. Kétujjas (pinch-to-zoom) nagyítás letiltása
+document.addEventListener('touchmove', function (event) {
+    if (event.touches.length > 1) {
+        event.preventDefault(); // Ha egynél több ujjal érnek a képernyőhöz, ne csináljon semmit
+    }
+}, { passive: false });
+
+// 2. Dupla koppintásos (double-tap) nagyítás erőszakos letiltása (ha a CSS nem lenne elég Safari alatt)
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+    let now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault(); // Ha 300 milliszekundumon belül két koppintás történik, letiltja
+    }
+    lastTouchEnd = now;
+}, false);
 </script>
 
 </body>

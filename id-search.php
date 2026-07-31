@@ -10,6 +10,11 @@ if (file_exists($file)) {
     for ($i = 0; $i < count($lines); $i += 4) {
         $id = $lines[$i] ?? '';
         $tartalom = $lines[$i + 1] ?? '';
+        
+        if (isset($tartalom[0]) && $tartalom[0] === '[') {
+        continue;
+        }
+        
         $entries[] = ['id' => str_pad($id, 4, "0", STR_PAD_LEFT), 'tartalom' => $tartalom];
     }
 }
@@ -27,34 +32,33 @@ body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    background: #f5f5f5;
+    background: black;
 }
 header {
     padding: 1rem;
-    background: #0077cc;
     color: white;
     text-align: center;
     font-size: 1.3rem;
 }
 #search-container {
-    padding: 1rem;
-    background: #fff;
+    padding: 10px;
 }
 #search {
     width: 100%;
     padding: 0.6rem;
     border: 1px solid #ccc;
-    border-radius: 6px;
     font-size: 1rem;
 }
 .entry {
     padding: 0.8rem;
+    margin: 10px;
     border-bottom: 1px solid #ddd;
     cursor: pointer;
     transition: background 0.2s;
+    background-color: white;
 }
 .entry:hover {
-    background: #f0f8ff;
+    background-color: #eee;
 }
 .msg {
     position: fixed;
@@ -128,6 +132,73 @@ entries.forEach(entry => {
         window.location.href = 'id.html?' + id;
     });
 });
+    
+document.addEventListener('keydown', function(event) {
+    // Ha a gombot nyomva tartják, ne fusson le többször
+    if (event.repeat) return;
+
+    const searchInput = document.getElementById('search');
+    const isInputActive = (document.activeElement === searchInput);
+
+    if (isInputActive) {
+        // --- HA AKTÍV A KERESŐMEZŐ ---
+        if (event.key === 'Escape') {
+            event.preventDefault(); // Megakadályozzuk az alap viselkedést
+            searchInput.blur(); // Kifókuszál
+        } else if (event.key === 'Tab') {
+            event.preventDefault();
+            searchInput.value = ''; // Töröl
+            searchInput.dispatchEvent(new Event('input', { bubbles: true })); // Frissít
+        } else if (event.key === 'Enter') {
+            event.preventDefault();
+            const entryElements = Array.from(document.getElementsByClassName('entry'));
+            const firstVisible = entryElements.find(entry => entry.style.display !== 'none');
+            
+            if (firstVisible) {
+                window.location.href = 'id.html?' + firstVisible.getAttribute('data-id');
+            }
+        }
+    } else {
+        // --- HA NINCS AKTÍV KERESŐMEZŐ ---
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            window.location.href = '../'; // Ugrás egy könyvtárral feljebb
+        } else if (event.key === 'Backspace') {
+            event.preventDefault();
+            window.history.back(); // Visszalépés az előző oldalra
+        } else if (event.key === 'Enter') {
+            event.preventDefault();
+            searchInput.focus(); // Befókuszál a keresőbe
+        } else if (event.key >= '1' && event.key <= '9') {
+            const index = parseInt(event.key) - 1;
+            const entryElements = Array.from(document.getElementsByClassName('entry'));
+            const visibleEntries = entryElements.filter(entry => entry.style.display !== 'none');
+            
+            if (visibleEntries[index]) {
+                window.location.href = 'id.html?' + visibleEntries[index].getAttribute('data-id');
+            }
+        }
+    }
+});
+    
+// --- ZOOMOLÁS LETILTÁSA MOBILON ---
+
+// 1. Kétujjas (pinch-to-zoom) nagyítás letiltása
+document.addEventListener('touchmove', function (event) {
+    if (event.touches.length > 1) {
+        event.preventDefault(); // Ha egynél több ujjal érnek a képernyőhöz, ne csináljon semmit
+    }
+}, { passive: false });
+
+// 2. Dupla koppintásos (double-tap) nagyítás erőszakos letiltása (ha a CSS nem lenne elég Safari alatt)
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+    let now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault(); // Ha 300 milliszekundumon belül két koppintás történik, letiltja
+    }
+    lastTouchEnd = now;
+}, false);
 </script>
 </body>
 </html>

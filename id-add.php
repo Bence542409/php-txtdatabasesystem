@@ -106,7 +106,7 @@ if (isset($_POST['skip_btn']) && isset($_SESSION['new_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Azonosító hozzáadása</title>
-    <link rel="stylesheet" type="text/css" href="1.css">
+    <link rel="stylesheet" type="text/css" href="main.css">
     <link rel="shortcut icon" href="favicon.ico" />
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <style>
@@ -118,9 +118,10 @@ if (isset($_POST['skip_btn']) && isset($_SESSION['new_id'])) {
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            min-height: 100vh;
             margin: 0;
             padding: 2rem;
+            max-height: 100vh;
+            overflow-x: hidden;
         }
         .container {
             background: #fff;
@@ -233,6 +234,15 @@ if (isset($_POST['skip_btn']) && isset($_SESSION['new_id'])) {
             <div class="msg <?php echo $_SESSION['msg']['type']; ?>">
                 <?php echo $_SESSION['msg']['text']; ?>
             </div>
+        
+            <?php if ($_SESSION['msg']['type'] === 'success'): ?>
+                <script>
+                    setTimeout(() => {
+                        window.location.href = "index.html";
+                    }, 3000);
+                </script>
+            <?php endif; ?>
+        
             <?php unset($_SESSION['msg']); ?>
         <?php endif; ?>
     </div>
@@ -246,6 +256,46 @@ if (isset($_POST['skip_btn']) && isset($_SESSION['new_id'])) {
             setTimeout(() => msg.remove(), 500); // végleg eltávolítja
         }
     }, 2000);
+        
+document.addEventListener("keydown", function(e) {
+    // Ha a gombot folyamatosan nyomva tartják, ne fusson le újra és újra
+    if (e.repeat) return;
+
+    // Ellenőrizzük, hogy aktív-e valamilyen beviteli mező
+    const isInputActive = ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName);
+    
+    // Ha beviteli mezőben vagyunk, kilépünk a függvényből, 
+    // így a gombok a normál dolgukat csinálják (pl. betű törlése)
+    if (isInputActive) return;
+
+    // Ha NINCS beviteli mezőben a fókusz, jöhetnek a gyorsgombok:
+    if (e.key === "Escape") {
+        e.preventDefault(); // Böngésző alapértelmezésének blokkolása
+        window.location.href = "../"; // Ugrás egy könyvtárral feljebb
+    } else if (e.key === "Backspace") {
+        e.preventDefault(); // Megakadályozzuk, hogy a Backspace mást is csináljon
+        window.history.back(); // Visszalépés az előző oldalra
+    }
+});
+        
+// --- ZOOMOLÁS LETILTÁSA MOBILON ---
+
+// 1. Kétujjas (pinch-to-zoom) nagyítás letiltása
+document.addEventListener('touchmove', function (event) {
+    if (event.touches.length > 1) {
+        event.preventDefault(); // Ha egynél több ujjal érnek a képernyőhöz, ne csináljon semmit
+    }
+}, { passive: false });
+
+// 2. Dupla koppintásos (double-tap) nagyítás erőszakos letiltása (ha a CSS nem lenne elég Safari alatt)
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+    let now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault(); // Ha 300 milliszekundumon belül két koppintás történik, letiltja
+    }
+    lastTouchEnd = now;
+}, false);
 </script>
 </body>
 </html>

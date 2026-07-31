@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>Tároló adatai - Garázs Szelektáló Rendszer v3.1</title>
-        <link rel="stylesheet" type="text/css" href="../../1.css">
+        <link rel="stylesheet" type="text/css" href="main.css">
         <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
         <link rel="shortcut icon" href="../../favicon.ico" />
         <meta http-equiv = "Content-Type" content = "text / html; charset = UTF-8" />
@@ -23,6 +23,19 @@ document.addEventListener("keydown", function(e) {
     if (e.key === "Backspace" && !["INPUT", "TEXTAREA"].includes(e.target.tagName)) {
         e.preventDefault(); // ne töröljön szöveget
         history.back();     // menjen vissza az előző oldalra
+    }
+});
+            
+document.addEventListener("keyup", function(e) {
+    // Ha a gombot folyamatosan nyomva tartják, ne fusson le újra és újra
+    if (e.repeat) return;
+
+    if (e.key === "Escape") {
+        e.preventDefault(); // Böngésző alapértelmezett funkciójának blokkolása
+        window.location.href = "../"; // Azonnali ugrás egy könyvtárral feljebb
+    } else if (e.key === "Backspace") {
+        e.preventDefault();
+        window.history.back(); // Pontosan egyetlen oldal visszalépése
     }
 });
 </script>
