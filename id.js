@@ -41,10 +41,18 @@ let id = a.substring(a.indexOf("?")+1);
             document.getElementById('picture').innerHTML = "<div style='width: 500px; height: 300px; background-color: #cc0000; color: white; display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: bold; border: 1px solid black;'>[NINCS KÉP]</div>";
         };
         
-        // Kép hozzáadása a weboldalhoz
+        // Hivatkozás (link) elem létrehozása
+        let linkEl = document.createElement("a");
+        linkEl.href = "picture/" + f_id + ".png"; // A link pontosan a képre mutasson
+        linkEl.target = "_blank"; // Új lapon nyitja meg a képet (ezt törölheted, ha ugyanazon a lapon szeretnéd)
+
+        // Kép beletétele a hivatkozásba
+        linkEl.appendChild(imgEl);
+
+        // A hivatkozás (benne a képpel) hozzáadása a weboldalhoz
         let picContainer = document.getElementById('picture');
         picContainer.innerHTML = "";
-        picContainer.appendChild(imgEl);
+        picContainer.appendChild(linkEl);
 
         document.getElementById('barcode').innerHTML = "<a href='barcode/" + f_id + ".png'>QR KÓD</a>";
     }
