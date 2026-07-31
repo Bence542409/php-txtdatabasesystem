@@ -34,9 +34,16 @@ document.addEventListener("keyup", function(e) {
         e.preventDefault(); // Böngésző alapértelmezett funkciójának blokkolása
         window.location.href = "../"; // Azonnali ugrás egy könyvtárral feljebb
     } else if (e.key === "Backspace") {
-        e.preventDefault();
-        window.history.back(); // Pontosan egyetlen oldal visszalépése
-    }
+            e.preventDefault(); // Megakadályozzuk az alapértelmezett viselkedést
+            
+            // Ha az előzmények hossza nagyobb mint 1, akkor van hova visszalépni
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Ha nincs előző oldal (pl. új fülként nyílt meg a QR olvasóból), bezárjuk a lapot
+                window.close();
+            }
+        }
 });
 </script>
     </body>
