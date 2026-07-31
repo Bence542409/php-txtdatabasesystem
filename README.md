@@ -53,7 +53,7 @@
 <br />
 <p>id-search.php --></p>
 <ul>
-<li>lists the contents of all the records</li>
+<li>lists the contents of all the records (avoids records starting with '[')</li>
 <li>press the "enter' key to focus the search input (while textbox is inactive)</li>
 <li>press the "enter' key to open the first result of search (while textbox is active)</li>
 <li>press the numeric keys (1 - 9) to open the numbered result of the search (while textbox is inactive)</li>
@@ -108,7 +108,7 @@
 <br />
 <p>id-location.php --></p>
 <ul>
-<li>displays active records by location</li>
+<li>displays active records by location (avoids records starting with '[')</li>
 <li>press the "backspace" key to navigate to the previous page</li>
 <li>press the "esc" key to navigate to the parent directory</li>
 </ul>
