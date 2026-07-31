@@ -106,4 +106,4 @@
 <p>The id.txt file works with my <a href="https://github.com/Bence542409/c-database-system">C# database system</a>.</p>
 <p>The files are in Hungarian.</p>
 <br />
-<p>Built by me with the help of ChatGPT.</p>
+<p>Built by me with the help of ChatGPT and Gemini.</p>
