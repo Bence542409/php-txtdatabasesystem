@@ -1,6 +1,11 @@
 # web-txt-database-system
 <p>Suitable for personal warehouse use.</p>
 <br />
+<p>The records must be stored in a txt file in the same directory on a web server.</p>
+<p>There are ten records added as an example.</p>
+<p>The id.txt file works with my <a href="https://github.com/Bence542409/c-database-system">C# database system</a>.</p>
+<p>The files are in Hungarian.</p>
+<br />
 <p>This program allows you to:</p>
 <ul>
 <li>create delete or modify records (id, content, type, place)</li>
@@ -101,9 +106,11 @@
 <li>press the "esc" key to navigate to the parent directory</li>
 </ul>
 <br />
-<p>The records must be stored in a txt file in the same directory on a web server.</p>
-<p>There are ten records added as an example.</p>
-<p>The id.txt file works with my <a href="https://github.com/Bence542409/c-database-system">C# database system</a>.</p>
-<p>The files are in Hungarian.</p>
+<p>id-location.php --></p>
+<ul>
+<li>displays active records by location</li>
+<li>press the "backspace" key to navigate to the previous page</li>
+<li>press the "esc" key to navigate to the parent directory</li>
+</ul>
 <br />
 <p>Built by me with the help of ChatGPT and Gemini.</p>
