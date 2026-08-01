@@ -1,4 +1,4 @@
-# web-txt-database-system
+# php-txtdatabasesystem
 <p>Suitable for personal warehouse use.</p>
 <br />
 <p>The records must be stored in a txt file in the same directory on a web server.</p>
