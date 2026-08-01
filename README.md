@@ -114,4 +114,13 @@
 <li>press the "esc" key to navigate to the parent directory</li>
 </ul>
 <br />
+<p>id-scan.php --></p>
+<ul>
+<li>scans qr codes associated with records</li>
+<li>option to select camera input</li>
+<li>rejects any qr codes which are not issued by the system (checks if qr code starts with: "[domain]/id.html?")</li>
+<li>press the "backspace" key to navigate to the previous page</li>
+<li>press the "esc" key to navigate to the parent directory</li>
+</ul>
+<br />
 <p>Built by me with the help of ChatGPT and Gemini.</p>
